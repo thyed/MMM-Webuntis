@@ -31,7 +31,7 @@ Module.register("MMM-Webuntis", {
         var wrapper = document.createElement("div");
 
         var table = document.createElement("table");
-    		table.className = "normal medium regular";
+    		table.className = "bright small light";
 
         if (this.lessons === undefined) {
     			return table;
@@ -46,7 +46,7 @@ Module.register("MMM-Webuntis", {
             var time = new Date(lesson.year,lesson.month-1,lesson.day,lesson.hour,lesson.minutes);
 
             // skip if nothing special
-            //if (lesson.code == '') continue;
+            if (lesson.code == '') continue;
 
             // skip past lessons
             if (time < new Date()) continue;
@@ -71,8 +71,8 @@ Module.register("MMM-Webuntis", {
             var subjectCell = document.createElement("td");
             subjectCell.innerHTML = this.capitalize(lesson.subject) + "&nbsp;("
               + this.capitalize(lesson.teacher) + ")&nbsp;" + lesson.code;
-            if (lesson.text.length > 0 ) subjectCell.innerHTML += "</br><span class='small dimmed'>" + lesson.text + "</span>";
-            subjectCell.className = "leftSpace alignTop";
+            if (lesson.text.length > 0 ) subjectCell.innerHTML += "</br><span class='xsmall dimmed'>" + lesson.text + "</span>";
+            subjectCell.className = "leftSpace align-left alignTop";
             row.appendChild(subjectCell);
 
         }
