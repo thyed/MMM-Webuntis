@@ -87,7 +87,7 @@ Module.register("MMM-Webuntis", {
       str = str.toLowerCase().split(" ");
 
       for (let i = 0, x = str.length; i < x; i++) {
-        str[i] = str[i][0].toUpperCase() + str[i].substr(1);
+        if (str[i]) str[i] = str[i][0].toUpperCase() + str[i].substr(1);
       }
 
       return str.join(" ");
