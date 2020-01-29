@@ -43,7 +43,12 @@ module.exports = NodeHelper.create({
   								hour.length == 3 ? hour = '0'+hour.substring(0,1) : hour = hour.substring(0,2);
   								let minutes = element.startTime.toString()
   								minutes = minutes.substring(minutes.length-2);
-  								lesson.dateString = element.date + hour + minutes;
+  								lesson.sortString = element.date + hour + minutes;
+                  switch (element.code) {
+                    case "cancelled": lesson.sortString += "1"; break;
+                    case "irregular": lesson.sortString += "2"; break;
+                    default: lesson.sortString += "9";
+                  }
                   lesson.year = year;
                   lesson.month = month;
                   lesson.day = day;

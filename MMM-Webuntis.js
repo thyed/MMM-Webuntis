@@ -38,7 +38,7 @@ Module.register("MMM-Webuntis", {
     		}
 
         // sort lessons by start time
-        this.lessons.sort((a,b) => a.dateString - b.dateString);
+        this.lessons.sort((a,b) => a.sortString - b.sortString);
 
         // iterate through lessons
         for (let i = 0; i < this.lessons.length; i++) {
@@ -70,9 +70,11 @@ Module.register("MMM-Webuntis", {
             // subject cell
             var subjectCell = document.createElement("td");
             subjectCell.innerHTML = this.capitalize(lesson.subject) + "&nbsp;("
-              + this.capitalize(lesson.teacher) + ")&nbsp;" + lesson.code;
-            if (lesson.text.length > 0 ) subjectCell.innerHTML += "</br><span class='xsmall dimmed'>" + lesson.text + "</span>";
+              + this.capitalize(lesson.teacher) + ")&nbsp;"; //+ lesson.code;
+            //if (lesson.text.length > 0 ) subjectCell.innerHTML += "</br><span class='xsmall dimmed'>" + lesson.text + "</span>";
             subjectCell.className = "leftSpace align-left alignTop";
+            if (lesson.code == 'cancelled') subjectCell.className += " cancelled";
+
             row.appendChild(subjectCell);
 
         }

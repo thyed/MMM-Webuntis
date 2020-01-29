@@ -5,3 +5,7 @@
 .alignTop {
   vertical-align: top;
 }
+
+.cancelled {
+  text-decoration: line-through;
+}
