@@ -69,8 +69,10 @@ Module.register("MMM-Webuntis", {
 
             // subject cell
             var subjectCell = document.createElement("td");
-            subjectCell.innerHTML = lesson.subject + "&nbsp;("
-              + lesson.teacher + ")&nbsp;"; //+ lesson.code;
+            subjectCell.innerHTML = lesson.substText;
+            if (lesson.substText == '') subjectCell.innerHTML =
+              this.capitalize(lesson.subject) + "&nbsp;(" +
+              this.capitalize(lesson.teacher) + ")";
             //if (lesson.text.length > 0 ) subjectCell.innerHTML += "</br><span class='xsmall dimmed'>" + lesson.text + "</span>";
             subjectCell.className = "leftSpace align-left alignTop";
             if (lesson.code == 'cancelled') subjectCell.className += " cancelled";
@@ -82,6 +84,16 @@ Module.register("MMM-Webuntis", {
         wrapper.appendChild(table);
 
         return wrapper
+    },
+
+    capitalize: function(str) {
+      str = str.toLowerCase().split(" ");
+
+      for (let i = 0, x = str.length; i < x; i++) {
+        if (str[i]) str[i] = str[i][0].toUpperCase() + str[i].substr(1);
+      }
+
+      return str.join(" ");
     },
 
     notificationReceived: function(notification, payload) {
