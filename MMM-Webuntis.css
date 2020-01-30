@@ -4,8 +4,14 @@
 
 .alignTop {
   vertical-align: top;
+  text-transform: capitalize;
 }
 
 .cancelled {
   text-decoration: line-through;
+}
+
+.error {
+  color: red;
+  //font-weight: bold;
 }

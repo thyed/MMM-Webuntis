@@ -65,7 +65,18 @@ module.exports = NodeHelper.create({
                 this.sendSocketNotification("GOT_DATA", lessons);
               })
               .catch(error => {
-                console.log("ERROR: Could not get valid sesssion. " + error);
+                let today = new Date();
+                let errorObject = [ {
+                  year: today.getFullYear(),
+                  month: today.getMonth()+1,
+                  day: today.getDate(),
+                  hour: today.getHours(),
+                  minutes: today.getMinutes(),
+                  subject: "ERROR",
+                  teacher: error.toString(),
+                  code: "error"
+                } ];
+                this.sendSocketNotification("GOT_DATA", errorObject);
               });
 
           untis.logout();

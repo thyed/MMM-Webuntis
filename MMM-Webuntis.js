@@ -49,7 +49,7 @@ Module.register("MMM-Webuntis", {
             if (lesson.code == '') continue;
 
             // skip past lessons
-            if (time < new Date()) continue;
+            if (time < new Date() && lesson.code != 'error') continue;
 
             var row = document.createElement("tr");
             table.appendChild(row);
@@ -69,30 +69,19 @@ Module.register("MMM-Webuntis", {
 
             // subject cell
             var subjectCell = document.createElement("td");
-            subjectCell.innerHTML = this.capitalize(lesson.subject) + "&nbsp;("
-              + this.capitalize(lesson.teacher) + ")&nbsp;"; //+ lesson.code;
+            subjectCell.innerHTML = lesson.subject + "&nbsp;("
+              + lesson.teacher + ")&nbsp;"; //+ lesson.code;
             //if (lesson.text.length > 0 ) subjectCell.innerHTML += "</br><span class='xsmall dimmed'>" + lesson.text + "</span>";
             subjectCell.className = "leftSpace align-left alignTop";
             if (lesson.code == 'cancelled') subjectCell.className += " cancelled";
+            if (lesson.code == 'error') subjectCell.className += " error";
 
             row.appendChild(subjectCell);
-
         }
 
         wrapper.appendChild(table);
 
         return wrapper
-    },
-
-
-    capitalize: function(str) {
-      str = str.toLowerCase().split(" ");
-
-      for (let i = 0, x = str.length; i < x; i++) {
-        if (str[i]) str[i] = str[i][0].toUpperCase() + str[i].substr(1);
-      }
-
-      return str.join(" ");
     },
 
     notificationReceived: function(notification, payload) {
