@@ -21,7 +21,7 @@ Module.register("MMM-Webuntis", {
   	},
 
     start: function (){
-        let lessons = [];
+        this.lessonsByStudent = [];
         this.sendSocketNotification("FETCH_DATA", this.config)
     },
 
@@ -31,68 +31,80 @@ Module.register("MMM-Webuntis", {
         var table = document.createElement("table");
     		table.className = "bright small light";
 
-        if (this.lessons === undefined) {
+        // no student
+        if (this.lessonsByStudent === undefined) {
     			return table;
     		}
 
-        // sort lessons by start time
-        this.lessons.sort((a,b) => a.sortString - b.sortString);
 
-        var addedRows = 0;
+        // iterate through students
+        for (let studentTitle in this.lessonsByStudent) {
+        //for (const [studentTitle, lessons] of this.lessonsByStudent.entries()) {
 
-        // iterate through lessons
-        for (let i = 0; i < this.lessons.length; i++) {
-            var lesson = this.lessons[i];
-            var time = new Date(lesson.year,lesson.month-1,lesson.day,lesson.hour,lesson.minutes);
+          var lessons = this.lessonsByStudent[studentTitle];
 
-            // skip if nothing special
-            if (lesson.code == '') continue;
+          Log.info(studentTitle);
+          Log.info(lessons);
 
-            // skip past lessons
-            if (time < new Date() && lesson.code != 'error') continue;
+          // sort lessons by start time
+          lessons.sort((a,b) => a.sortString - b.sortString);
 
-            addedRows++;
+          var addedRows = 0;
 
-            var row = document.createElement("tr");
-            table.appendChild(row);
+          // iterate through lessons
+          for (let i = 0; i < lessons.length; i++) {
+              var lesson = lessons[i];
+              var time = new Date(lesson.year,lesson.month-1,lesson.day,lesson.hour,lesson.minutes);
 
-            // title, i.e. class name or child name
-            var titleCell = document.createElement("td");
-            titleCell.innerHTML = this.config.title;
-            titleCell.className = "align-right alignTop";
-            row.appendChild(titleCell);
+              // skip if nothing special
+              if (lesson.code == '') continue;
 
-            // date and time
-            var dateTimeCell = document.createElement("td");
-            dateTimeCell.innerHTML = time.toLocaleDateString('de-DE',{weekday:'short'})
-              + "&nbsp;" + time.toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit'});
-            dateTimeCell.className = "leftSpace align-right alignTop";
-            row.appendChild(dateTimeCell);
+              // skip past lessons
+              if (time < new Date() && lesson.code != 'error') continue;
 
-            // subject cell
-            var subjectCell = document.createElement("td");
-            subjectCell.innerHTML = lesson.substText;
-            if (lesson.substText == '') subjectCell.innerHTML =
-              this.capitalize(lesson.subject) + "&nbsp;(" +
-              this.capitalize(lesson.teacher) + ")";
-            //if (lesson.text.length > 0 ) subjectCell.innerHTML += "</br><span class='xsmall dimmed'>" + lesson.text + "</span>";
-            subjectCell.className = "leftSpace align-left alignTop";
-            if (lesson.code == 'cancelled') subjectCell.className += " cancelled";
-            if (lesson.code == 'error') subjectCell.className += " error";
+              addedRows++;
 
-            row.appendChild(subjectCell);
+              var row = document.createElement("tr");
+              table.appendChild(row);
+
+              // title, i.e. class name or child name
+              var titleCell = document.createElement("td");
+              titleCell.innerHTML = studentTitle;
+              titleCell.className = "align-right alignTop";
+              row.appendChild(titleCell);
+
+              // date and time
+              var dateTimeCell = document.createElement("td");
+              dateTimeCell.innerHTML = time.toLocaleDateString('de-DE',{weekday:'short'})
+                + "&nbsp;" + time.toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit'});
+              dateTimeCell.className = "leftSpace align-right alignTop";
+              row.appendChild(dateTimeCell);
+
+              // subject cell
+              var subjectCell = document.createElement("td");
+              subjectCell.innerHTML = lesson.substText;
+              if (lesson.substText == '') subjectCell.innerHTML =
+                this.capitalize(lesson.subject) + "&nbsp;(" +
+                this.capitalize(lesson.teacher) + ")";
+              //if (lesson.text.length > 0 ) subjectCell.innerHTML += "</br><span class='xsmall dimmed'>" + lesson.text + "</span>";
+              subjectCell.className = "leftSpace align-left alignTop";
+              if (lesson.code == 'cancelled') subjectCell.className += " cancelled";
+              if (lesson.code == 'error') subjectCell.className += " error";
+
+              row.appendChild(subjectCell);
+          }
+
+          // add message row if table is empty
+          if (addedRows == 0) {
+            var nothingRow = document.createElement("tr");
+            table.appendChild(nothingRow);
+            var nothingCell = document.createElement("td");
+            nothingCell.innerHTML = this.translate("nothing");
+            nothingRow.appendChild(nothingCell);
+          }
+
+          wrapper.appendChild(table);
         }
-
-        // add message row if table is empty
-        if (addedRows == 0) {
-          var nothingRow = document.createElement("tr");
-          table.appendChild(nothingRow);
-          var nothingCell = document.createElement("td");
-          nothingCell.innerHTML = this.translate("nothing");
-          nothingRow.appendChild(nothingCell);
-        }
-
-        wrapper.appendChild(table);
 
         return wrapper
     },
@@ -118,12 +130,9 @@ Module.register("MMM-Webuntis", {
     },
 
     socketNotificationReceived: function(notification, payload) {
-        switch(notification) {
-            case "GOT_DATA":
-                this.lessons = payload;
-                console.log(this.lessons);
-                this.updateDom();
-                break;
+        if (notification === "GOT_DATA") {
+          this.lessonsByStudent[payload.title] = payload.lessons;
+          this.updateDom();
         }
     },
 
