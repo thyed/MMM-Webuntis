@@ -13,15 +13,13 @@ Module.register("MMM-Webuntis", {
   		return ["MMM-Webuntis.css"];
   	},
 
-
-/*
     getTranslations: function () {
   		return {
   			en: "translations/en.json",
   			de: "translations/de.json"
   		};
   	},
-*/
+
     start: function (){
         let lessons = [];
         this.sendSocketNotification("FETCH_DATA", this.config)
@@ -40,6 +38,8 @@ Module.register("MMM-Webuntis", {
         // sort lessons by start time
         this.lessons.sort((a,b) => a.sortString - b.sortString);
 
+        var addedRows = 0;
+
         // iterate through lessons
         for (let i = 0; i < this.lessons.length; i++) {
             var lesson = this.lessons[i];
@@ -50,6 +50,8 @@ Module.register("MMM-Webuntis", {
 
             // skip past lessons
             if (time < new Date() && lesson.code != 'error') continue;
+
+            addedRows++;
 
             var row = document.createElement("tr");
             table.appendChild(row);
@@ -79,6 +81,15 @@ Module.register("MMM-Webuntis", {
             if (lesson.code == 'error') subjectCell.className += " error";
 
             row.appendChild(subjectCell);
+        }
+
+        // add message row if table is empty
+        if (addedRows == 0) {
+          var nothingRow = document.createElement("tr");
+          table.appendChild(nothingRow);
+          var nothingCell = document.createElement("td");
+          nothingCell.innerHTML = this.translate("nothing");
+          nothingRow.appendChild(nothingCell);
         }
 
         wrapper.appendChild(table);
