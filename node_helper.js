@@ -11,13 +11,13 @@ module.exports = NodeHelper.create({
 
         // iterate through students, fetch and send lessons
         for (let i in payload.students) {
-          this.fetchLessons(payload.students[i]);
+          this.fetchLessons(payload.students[i], payload.days);
         }
       }
     },
 
 
-    fetchLessons: function(studentData) {
+    fetchLessons: function(studentData, days) {
 
         const untis = new WebUntis(
           studentData.school,
@@ -25,6 +25,8 @@ module.exports = NodeHelper.create({
           studentData.password,
           studentData.server
         );
+
+        if (days<1 || days>10 || isNaN(days)) days = 1;
 
         // create lessons array to be sent to module
         var lessons = [];
@@ -34,7 +36,7 @@ module.exports = NodeHelper.create({
             .then(session => {
               var rangeStart = new Date();
               var rangeEnd = new Date();
-              rangeEnd.setDate(rangeStart.getDate()+1);
+              rangeEnd.setDate(rangeStart.getDate()+days);
               return untis.getOwnTimetableForRange(rangeStart, rangeEnd);
             })
             .then(timetable => {
@@ -82,7 +84,7 @@ module.exports = NodeHelper.create({
                 teacher: error.toString(),
                 code: "error"
               } ];
-              this.sendSocketNotification("GOT_DATA", errorObject);
+              this.sendSocketNotification("GOT_DATA", {title: studentData.title, lessons: errorObject});
             });
 
         untis.logout();

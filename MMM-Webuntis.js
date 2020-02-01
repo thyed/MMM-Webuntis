@@ -36,22 +36,19 @@ Module.register("MMM-Webuntis", {
     			return table;
     		}
 
+        var addedRows = 0;
 
         // iterate through students
+        // TODO: for..in does not guarantee specific order
         for (let studentTitle in this.lessonsByStudent) {
         //for (const [studentTitle, lessons] of this.lessonsByStudent.entries()) {
 
           var lessons = this.lessonsByStudent[studentTitle];
 
-          Log.info(studentTitle);
-          Log.info(lessons);
-
           // sort lessons by start time
           lessons.sort((a,b) => a.sortString - b.sortString);
 
-          var addedRows = 0;
-
-          // iterate through lessons
+          // iterate through lessons of current student
           for (let i = 0; i < lessons.length; i++) {
               var lesson = lessons[i];
               var time = new Date(lesson.year,lesson.month-1,lesson.day,lesson.hour,lesson.minutes);
@@ -92,19 +89,19 @@ Module.register("MMM-Webuntis", {
               if (lesson.code == 'error') subjectCell.className += " error";
 
               row.appendChild(subjectCell);
-          }
+          } // end for lessons
+        } // end for students
 
-          // add message row if table is empty
-          if (addedRows == 0) {
-            var nothingRow = document.createElement("tr");
-            table.appendChild(nothingRow);
-            var nothingCell = document.createElement("td");
-            nothingCell.innerHTML = this.translate("nothing");
-            nothingRow.appendChild(nothingCell);
-          }
-
-          wrapper.appendChild(table);
+        // add message row if table is empty
+        if (addedRows == 0) {
+          var nothingRow = document.createElement("tr");
+          table.appendChild(nothingRow);
+          var nothingCell = document.createElement("td");
+          nothingCell.innerHTML = this.translate("nothing");
+          nothingRow.appendChild(nothingCell);
         }
+
+        wrapper.appendChild(table);
 
         return wrapper
     },
@@ -131,8 +128,10 @@ Module.register("MMM-Webuntis", {
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === "GOT_DATA") {
-          this.lessonsByStudent[payload.title] = payload.lessons;
-          this.updateDom();
+          if (payload.lessons) {
+            this.lessonsByStudent[payload.title] = payload.lessons;
+            this.updateDom();
+          }
         }
     },
 
