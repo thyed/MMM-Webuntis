@@ -11,7 +11,8 @@ Module.register("MMM-Webuntis", {
           },
         ],
         days: 7,
-        fetchInterval: 5 * 60 * 1000
+        fetchInterval: 5 * 60 * 1000,
+        showStartTime: false
       },
 
 
@@ -78,8 +79,9 @@ Module.register("MMM-Webuntis", {
 
               // date and time
               var dateTimeCell = document.createElement("td");
-              dateTimeCell.innerHTML = time.toLocaleDateString('de-DE',{weekday:'short'})
-                + "&nbsp;" + time.toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit'});
+              dateTimeCell.innerHTML = time.toLocaleDateString('de-DE',{weekday:'short'}).toUpperCase() + "&nbsp;"
+              if (this.config.showStartTime || lesson.lessonNumber === undefined) dateTimeCell.innerHTML += time.toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit'});
+              else dateTimeCell.innerHTML += lesson.lessonNumber + ".";
               dateTimeCell.className = "leftSpace align-right alignTop";
               row.appendChild(dateTimeCell);
 
