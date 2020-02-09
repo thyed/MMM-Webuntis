@@ -1,12 +1,18 @@
 Module.register("MMM-Webuntis", {
 
     defaults: {
-        title: "",
-        school: "",
-        username: "",
-        password: "",
-        server: ""
-    },
+        students: [
+          {
+            title: "SET CONFIG!",
+            school: "",
+            username: "",
+            password: "",
+            server: ""
+          },
+        ],
+        days: 7,
+        fetchInterval: 5 * 60 * 1000
+      },
 
 
     getStyles: function () {
@@ -124,7 +130,7 @@ Module.register("MMM-Webuntis", {
             case "DOM_OBJECTS_CREATED":
                 var timer = setInterval(() => {
                     this.sendSocketNotification("FETCH_DATA", this.config)
-                }, 60*1000)
+                }, this.config.fetchInterval)
             break;
         }
     },
