@@ -112,7 +112,7 @@ This module may be useful for students at schools using Untis for the organizati
 
 
 ## Screenshots
-![Screenshot](https://github.com/thyed/MMM-Webuntis/screenshot.png "Screenshot")
+![Screenshot](screenshot.png "Screenshot")
 
 ## Attribution
 
